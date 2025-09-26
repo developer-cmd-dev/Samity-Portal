@@ -39,5 +39,12 @@ const updateContent = async(req:Request,res:Response)=>{
         res.status(200).json({message:"successfully updated",data:findData});
 }
 
+const deleteContent = async(req:Request,res:Response)=>{
+    const id = req.params.id;
+    const response = await RaseedModel.deleteOne({_id:id});
+    if (!response) res.status(404).json({message:"no data found"});
+    res.status(200).json({message:"successfully deleted",data:response});
+}
 
-export {addContent,updateContent}
+
+export {addContent,updateContent,deleteContent}
