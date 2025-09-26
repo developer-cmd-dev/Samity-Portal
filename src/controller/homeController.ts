@@ -6,7 +6,6 @@ import {RaseedModel} from "../model/raseed.model.js";
 
 const homeContent = async (req:Request,res:Response)=>{
     const data =await RaseedModel.find().limit(10).exec();
-    console.log(data);
     res.status(200).json({message:"data fetched",data:data});
 }
 

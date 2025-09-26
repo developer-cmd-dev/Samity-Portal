@@ -26,8 +26,18 @@ const addContent = async(req:Request,res:Response)=>{
 
 
 const updateContent = async(req:Request,res:Response)=>{
+        const id = req.params.id;
+        const data = req.body;
 
+        const findData =await RaseedModel.updateOne({_id:id},{
+            name:data.name,
+            raseedNo:data.raseedNo,
+            amount:data.amount,
+            isPaid:data.isPaid
+        });
+        if (!findData) res.status(404).json({message:"no data found"});
+        res.status(200).json({message:"successfully updated",data:findData});
 }
 
 
-export {addContent}
+export {addContent,updateContent}
