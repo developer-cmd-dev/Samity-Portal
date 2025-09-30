@@ -4,7 +4,7 @@ import {RaseedModel} from "../model/raseed.model.js";
 
 interface RaseedType  {
     name: string;
-    raseedNo:number;
+    invoiceNo:number
     amount:number;
     isPaid:boolean;
 
@@ -12,15 +12,21 @@ interface RaseedType  {
 
 const addContent = async(req:Request,res:Response)=>{
     const data:RaseedType = req.body;
-    if (!data) res.status(400).json({message:"data is required"});
+    if (!data){
+        res.status(400).json({message:"data is required"});
+        return;
+    }
 
     const response=   await RaseedModel.create({
         name:data.name,
-        raseedNo:data.raseedNo,
+        invoiceNo:data.invoiceNo,
         amount:data.amount,
         isPaid:data.isPaid
     })
-    if (!response) res.status(505).json({message:"Something went wrong"});
+    if (!response) {
+        res.status(505).json({message:"Something went wrong"});
+        return;
+    }
     res.status(200).json({message:"successfully added",data:response});
 }
 
@@ -35,16 +41,48 @@ const updateContent = async(req:Request,res:Response)=>{
             amount:data.amount,
             isPaid:data.isPaid
         });
-        if (!findData) res.status(404).json({message:"no data found"});
+        if (!findData){
+            res.status(404).json({message:"no data found"});
+            return;
+        }
         res.status(200).json({message:"successfully updated",data:findData});
 }
 
 const deleteContent = async(req:Request,res:Response)=>{
     const id = req.params.id;
     const response = await RaseedModel.deleteOne({_id:id});
-    if (!response) res.status(404).json({message:"no data found"});
+    if (!response) {
+        res.status(404).json({message:"no data found"});
+        return;
+    }
     res.status(200).json({message:"successfully deleted",data:response});
 }
 
+const searchContent = async(req:Request,res:Response)=>{
+    const value = req.query.q;
+    if (!value) {
+        res.status(404).json({message:"Empty query"})
+        return;
+    }
+    let query=[];
+    // @ts-ignore
+    if (!isNaN(value)){
+    query.push({raseedNo:Number(value)})
+    }else{
+        query.push({name: { $regex: value, $options: 'i' } });
 
-export {addContent,updateContent,deleteContent}
+    }
+
+
+    const response = await RaseedModel.find({$or:query}).limit(50);
+    if (!response) {
+        res.status(404).json({message:"no data found"});
+        return;
+    }
+
+    res.status(200).json({message:value,data:response});
+
+}
+
+
+export {addContent,updateContent,deleteContent,searchContent}

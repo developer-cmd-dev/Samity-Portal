@@ -6,13 +6,16 @@ const ReseedSchema = new Schema({
         type: String,
         required: true,
     },
-    raseedNo:{
+    invoiceNo:{
         type: Number,
         required: true,
     },
     amount:{
         type: Number,
         required: true,
+    },
+    address:{
+        type: String,
     },
     isPaid:{
         type: Boolean,
